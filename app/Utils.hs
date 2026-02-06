@@ -33,5 +33,7 @@ draai (x:xs) = draai(xs) ++ [x]
 
 printBinair :: Int -> IO ()
 printBinair n
-    | n < 2 = putStrLn(n)
-    | otherwise = printBinair(n / 2)
+    | n < 2 = putStr(show n)
+    | otherwise = do
+        printBinair(n `div` 2) 
+        putStr(show (n `mod` 2))
