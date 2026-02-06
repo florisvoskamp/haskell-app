@@ -1,6 +1,6 @@
 module Main where
 
-import Utils
+import W1.Les3
 
 main :: IO ()
 main = do

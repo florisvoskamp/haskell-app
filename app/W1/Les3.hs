@@ -1,5 +1,6 @@
-module Utils where
+module W1.Les3 where
 
+-- assignment 3
 gcd' :: Integer -> Integer -> Integer 
 -- type signature: gcd' takes two Integers and returns an Integer
 gcd' a 0 = a 
@@ -7,6 +8,7 @@ gcd' a 0 = a
 gcd' a b = gcd' b (a `mod` b) 
 -- recursive case: call gcd' with b and the remainder of a divided by b
 
+-- assignment 4
 isPal :: String -> Bool
 -- type signature
 isPal "" = True
@@ -16,6 +18,7 @@ isPal [_] = True
 isPal s = (head s == last s) && isPal(init (tail s))
 -- check if first letter matches last letter, and check recursively if middle is also a palindrome
 
+-- assignment 5
 somVanCijfer :: Integer -> Integer
 -- type signature
 somVanCijfer n
@@ -24,6 +27,7 @@ somVanCijfer n
     | otherwise = (n `mod` 10) + somVanCijfer(n `div` 10)
     -- 
 
+-- assignment 6
 draai :: [Int] -> [Int]
 -- type signature
 draai [] = []
@@ -31,7 +35,9 @@ draai [] = []
 draai (x:xs) = draai(xs) ++ [x]
 -- 
 
+-- assignment 7
 printBinair :: Int -> IO ()
+-- type signature int in print out
 printBinair n
     | n < 2 = putStr(show n)
     | otherwise = do
