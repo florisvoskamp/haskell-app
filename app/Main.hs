@@ -9,3 +9,4 @@ main = do
   putStrLn $ "isPal lepel = " ++ show (isPal "lepel")
   putStrLn $ "somVanCijfer 1234 = " ++ show (somVanCijfer 1234)
   putStrLn $ "draai [1,2,3,4] = " ++ show (draai [1,2,3,4])
+  

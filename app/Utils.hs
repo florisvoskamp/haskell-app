@@ -30,3 +30,8 @@ draai [] = []
 -- 
 draai (x:xs) = draai(xs) ++ [x]
 -- 
+
+printBinair :: Int -> IO ()
+printBinair n
+    | n < 2 = 
+    | otherwise = 
