@@ -1,6 +1,6 @@
 module Main where
 
-import W1.Les3
+import Assignments.Recursion
 
 main :: IO ()
 main = do

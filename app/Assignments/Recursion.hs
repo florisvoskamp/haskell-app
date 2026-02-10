@@ -1,4 +1,4 @@
-module W1.Les3 where
+module Assignments.Recursion where
 
 -- assignment 3
 gcd' :: Integer -> Integer -> Integer 
