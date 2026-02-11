@@ -7,7 +7,7 @@ applyEvent :: Money -> Event -> Money
 applyEvent (Cents balance) (Income (Cents amount)) = 
     -- If it's income, just add the amount
     Cents (balance + amount)
-applyEvent (Cents balance) (Expense cat (Cents amount)) = 
+applyEvent (Cents balance) (Expense _ (Cents amount)) = 
     -- If it's expense, subtract the amount, category is not used in this function
     Cents (balance - amount)
 
@@ -25,10 +25,10 @@ simulate startBalance events n =
     -- (1, startBalance) means we start with month 1 and our starting money
     -- [1..n] just means we do it for 'n' months
     -- step updates the month number and balance
-    -- tail removes the first one (that is just the start), so we get only real months
+    -- drop 1 removes the first one (that is just the start), so we get only real months
     -- map snd gets only the money amount out of the pair
     -- zip [1..n] sticks the month number together with the balance
     map (uncurry MonthState) (zip [1..n] balancesPerMonth)
     where
         step (month, balance) _ = (month + 1, simulateMonth balance events)
-        balancesPerMonth = map snd (tail (scanl step (1, startBalance) [1..n]))
+        balancesPerMonth = map snd (drop 1 (scanl step (1, startBalance) [1..n]))
