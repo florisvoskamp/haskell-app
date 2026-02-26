@@ -5,6 +5,7 @@ data Money = Cents Int
 data Category = Category String
 data Event = Income Money | Expense Category Money
 data MonthState = MonthState Int Money
+data Rule = MinBalance Money
 
 -- Takes 100.00 euro and turns it into 100000 cents
 euroToCents :: Double -> Money
