@@ -11,7 +11,7 @@ main = defaultMain $ testGroup "BudgetFlow"
     testCase "centsToDisplayString" $ assertEqual "" "12.5" (centsToDisplayString (Cents 1250))
   ]
   , testGroup "Core" [
-
+    testCase "applyEvent" $ assertEqual "" (Cents 1000) (applyEvent (Cents 1000) (Event )
   ]
   , testGroup "Rules" [
 
