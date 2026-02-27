@@ -1,7 +1,8 @@
 module BudgetFlow.Rules where
 
 evalRules :: [Rule] -> MonthState -> [Event] -> [String]
-evalRules 
+evalRules rules monthState _events = mapMaybe
 
 checkRule :: Rule -> MonthState -> Maybe String
-checkRule MonthState month (Cents balance) MinBalance (Cents minimum) = balance < minimum
+checkRule (MinBalance (Cents minAmt)) (MonthState _ (Cents balance)) =
+  if balance < minAmt then Just "Saldo onder minimum" else Nothing 
