@@ -22,6 +22,7 @@ main = defaultMain $ testGroup "BudgetFlow"
     testCase "simulateMonth" $ assertEqual "" (Cents 2500) (simulateMonth (Cents 1000) [Income (Cents 2000), Expense (Category "Rent") (Cents 500)])
   ]
   , testGroup "Rules" [
-    testCase "checkRule" $ assertEqual "" (Just "Saldo onder minimum") (checkRule (MinBalance(Cents 1000)) ((MonthState 1 (Cents 500))))
+    testCase "checkRule" $ assertEqual "" (Just "Saldo onder minimum") (checkRule (MinBalance(Cents 1000)) ((MonthState 1 (Cents 500)))),
+    testCase "evalRules" $ assertEqual "" 
   ]
   ]
