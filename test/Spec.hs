@@ -7,7 +7,7 @@ import BudgetFlow.Types
       Money(Cents),
       euroToCents,
       centsToDisplayString, Category (..) )
-import BudgetFlow.Core ( applyEvent ) 
+import BudgetFlow.Core ( applyEvent, simulateMonth ) 
 
 main :: IO ()
 main = defaultMain $ testGroup "BudgetFlow"
@@ -17,7 +17,8 @@ main = defaultMain $ testGroup "BudgetFlow"
   ]
   , testGroup "Core" [
     testCase "applyEvent" $ assertEqual "Income adds to balance" (Cents 1200) (applyEvent (Cents 1000) (Income (Cents 200))),
-    testCase "applyEvent" $ assertEqual "Expense takes from balance" (Cents 800) (applyEvent (Cents 1000) (Expense (Category "") (Cents 200)))
+    testCase "applyEvent" $ assertEqual "Expense takes from balance" (Cents 800) (applyEvent (Cents 1000) (Expense (Category "") (Cents 200))),
+    testCase "simulateMonth" $ assertEqual "" (Cents 2500) (simulateMonth (Cents 1000) [Income (Cents 2000), Expense (Category "Rent") (Cents 500)])
   ]
   , testGroup "Rules" [
 
