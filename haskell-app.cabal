@@ -76,3 +76,16 @@ executable haskell-app
 
     -- Base language which the package is written in.
     default-language: GHC2024
+
+test-suite haskell-app-test
+    import:           warnings
+    type:             exitcode-stdio-1.0
+    main-is:          Spec.hs
+    hs-source-dirs:   app, test
+    other-modules:    BudgetFlow.Types
+                     BudgetFlow.Core
+                     BudgetFlow.Rules
+    build-depends:    base
+                   , tasty
+                   , tasty-hunit
+    default-language: GHC2024

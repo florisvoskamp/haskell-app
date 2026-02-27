@@ -1,7 +1,7 @@
 module BudgetFlow.Types where
 
 -- Define types for BudgetFlow
-data Money = Cents Int
+data Money = Cents Int deriving (Eq, Show)
 data Category = Category String
 data Event = Income Money | Expense Category Money
 data MonthState = MonthState Int Money
