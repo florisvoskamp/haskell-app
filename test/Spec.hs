@@ -6,8 +6,9 @@ import BudgetFlow.Types
     ( Event(Expense, Income),
       Money(Cents),
       euroToCents,
-      centsToDisplayString, Category (..) )
+      centsToDisplayString, Category (..), MonthState (MonthState), Rule (..) )
 import BudgetFlow.Core ( applyEvent, simulateMonth ) 
+import BudgetFlow.Rules (checkRule)
 
 main :: IO ()
 main = defaultMain $ testGroup "BudgetFlow"
@@ -21,6 +22,6 @@ main = defaultMain $ testGroup "BudgetFlow"
     testCase "simulateMonth" $ assertEqual "" (Cents 2500) (simulateMonth (Cents 1000) [Income (Cents 2000), Expense (Category "Rent") (Cents 500)])
   ]
   , testGroup "Rules" [
-
+    testCase "checkRule" $ assertEqual "" (Just "Saldo onder minimum") (checkRule (MinBalance(Cents 1000)) ((MonthState 1 (Cents 500))))
   ]
   ]
