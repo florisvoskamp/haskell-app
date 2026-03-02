@@ -4,7 +4,7 @@ module BudgetFlow.Types where
 data Money = Cents Int deriving (Eq, Show)
 data Category = Category String
 data Event = Income Money | Expense Category Money
-data MonthState = MonthState Int Money
+data MonthState = MonthState Int Money deriving (Eq, Show)
 data Rule = MinBalance Money
 
 -- Takes 100.00 euro and turns it into 100000 cents

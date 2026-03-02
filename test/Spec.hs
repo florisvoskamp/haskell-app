@@ -7,7 +7,7 @@ import BudgetFlow.Types
       Money(Cents),
       euroToCents,
       centsToDisplayString, Category (..), MonthState (MonthState), Rule (..) )
-import BudgetFlow.Core ( applyEvent, simulateMonth ) 
+import BudgetFlow.Core ( applyEvent, simulateMonth, simulate ) 
 import BudgetFlow.Rules (checkRule, evalRules)
 
 main :: IO ()
@@ -19,7 +19,8 @@ main = defaultMain $ testGroup "BudgetFlow"
   , testGroup "Core" [
     testCase "applyEvent" $ assertEqual "Income adds to balance" (Cents 1200) (applyEvent (Cents 1000) (Income (Cents 200))),
     testCase "applyEvent" $ assertEqual "Expense takes from balance" (Cents 800) (applyEvent (Cents 1000) (Expense (Category "") (Cents 200))),
-    testCase "simulateMonth" $ assertEqual "" (Cents 2500) (simulateMonth (Cents 1000) [Income (Cents 2000), Expense (Category "Rent") (Cents 500)])
+    testCase "simulateMonth" $ assertEqual "" (Cents 2500) (simulateMonth (Cents 1000) [Income (Cents 2000), Expense (Category "Rent") (Cents 500)]),
+    testCase "simulate" $ assertEqual "" ([((MonthState 1 (Cents 1000))), ((MonthState 2 (Cents 1000)))]) (simulate (Cents 1000) [Expense (Category "Rent") (Cents 500), Income (Cents 1000)] 3)
   ]
   , testGroup "Rules" [
     testCase "checkRule" $ assertEqual "" (Just "Saldo onder minimum") (checkRule (MinBalance(Cents 1000)) ((MonthState 1 (Cents 500)))),
