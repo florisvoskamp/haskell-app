@@ -8,8 +8,8 @@ data MonthState = MonthState Int Money deriving (Eq, Show)
 data Rule = MinBalance Money
 data Config = Config {
     startBalance        :: Money,
-    monthsToSimulate    :: Int,
-    monthlyEvents       :: [Event]
+    monthlyEvents       :: [Event],
+    monthsToSimulate    :: Int
 }
 
 -- Takes 100.00 euro and turns it into 100000 cents
