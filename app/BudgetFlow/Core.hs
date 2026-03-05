@@ -18,8 +18,8 @@ simulateMonth start events = foldl applyEvent start events
 
 -- This function does the budget for multiple months
 -- It gives a list with the balance at the end of each month
-simulate :: Money -> [Event] -> Int -> [MonthState]
-simulate startBalance events n = 
+simulateWith :: Money -> [Event] -> Int -> [MonthState]
+simulateWith startBalance events n = 
     -- We make a list of the balance after each month
     -- scanl keeps track of how the balance changes every month
     -- (1, startBalance) means we start with month 1 and our starting money
@@ -32,3 +32,7 @@ simulate startBalance events n =
     where
         step (month, balance) _ = (month + 1, simulateMonth balance events)
         balancesPerMonth = map snd (drop 1 (scanl step (1, startBalance) [1..n]))
+
+-- Run simulation with a config
+simulate :: Config -> [MonthState]
+simulate config = simulateWith (startBalance config) (monthlyEvents config) (monthsToSimulate config)

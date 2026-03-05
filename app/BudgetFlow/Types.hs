@@ -6,6 +6,11 @@ data Category = Category String
 data Event = Income Money | Expense Category Money
 data MonthState = MonthState Int Money deriving (Eq, Show)
 data Rule = MinBalance Money
+data Config = Config {
+    startBalance        :: Money,
+    monthsToSimulate    :: Int,
+    monthlyEvents       :: [Event]
+}
 
 -- Takes 100.00 euro and turns it into 100000 cents
 euroToCents :: Double -> Money
