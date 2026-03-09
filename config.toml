@@ -1,0 +1,10 @@
+startBalance = 100000
+monthsToSimulate = 3
+
+[events]
+Income = 20000
+Rent = 40000
+Groceries = 10000
+
+[rules]
+MinBalance = 10000

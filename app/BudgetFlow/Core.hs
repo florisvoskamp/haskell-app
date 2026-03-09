@@ -27,7 +27,7 @@ simulateWith startBalance events n =
     -- step updates the month number and balance
     -- drop 1 removes the first one (that is just the start), so we get only real months
     -- map snd gets only the money amount out of the pair
-    -- zip [1..n] sticks the month number together with the balance
+    -- zip [1..n] sticksd the month number together with the balance
     map (uncurry MonthState) (zip [1..n] balancesPerMonth)
     where
         step (month, balance) _ = (month + 1, simulateMonth balance events)

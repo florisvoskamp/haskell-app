@@ -11,6 +11,9 @@ data Config = Config {
     monthlyEvents       :: [Event],
     monthsToSimulate    :: Int
 }
+-- Een document = lijst van secties. Elke sectie heeft een naam en key-value paren.
+-- Sectienaam "" = top-level (geen [sectie] header)
+type TOMLDoc = [(String, [(String, String)])]
 
 -- Takes 100.00 euro and turns it into 100000 cents
 euroToCents :: Double -> Money

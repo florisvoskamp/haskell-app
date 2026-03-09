@@ -1,8 +1,8 @@
 module Main where
 
 import Assignments.Recursion
-import BudgetFlow.Types
 import BudgetFlow.Core
+import BudgetFlow.Types
 
 main :: IO ()
 main = do
@@ -25,7 +25,8 @@ testBudgetFlow = do
       expense2 = Expense (Category "Groceries") (Cents 10000)
       events = [income, expense1, expense2]
       nMonths = 3
-      result = simulate start events nMonths
+      config = Config start events nMonths
+      result = simulate config
   putStrLn $ "Simulate " ++ show nMonths ++ " months starting from €" ++ centsToDisplayString start
   mapM_ printMonth result
   where

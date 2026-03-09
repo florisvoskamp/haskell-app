@@ -64,6 +64,9 @@ executable haskell-app
     other-modules:      Assignments.Recursion
                         BudgetFlow.Types
                         BudgetFlow.Core
+                        BudgetFlow.Rules
+                        BudgetFlow.Config
+                        BudgetFlow.TOML
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
