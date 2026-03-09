@@ -5,11 +5,12 @@ data Money = Cents Int deriving (Eq, Show)
 data Category = Category String deriving (Eq, Show)
 data Event = Income Money | Expense Category Money deriving (Eq, Show)
 data MonthState = MonthState Int Money deriving (Eq, Show)
-data Rule = MinBalance Money
+data Rule = MinBalance Money | CategoryLimit Category Money deriving (Eq, Show)
 data Config = Config {
     startBalance        :: Money,
     monthlyEvents       :: [Event],
-    monthsToSimulate    :: Int
+    monthsToSimulate    :: Int,
+    rules               :: [Rule]
 } deriving (Eq, Show)
 -- Een document = lijst van secties. Elke sectie heeft een naam en key-value paren.
 -- Sectienaam "" = top-level (geen [sectie] header)

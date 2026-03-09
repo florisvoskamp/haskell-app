@@ -23,7 +23,9 @@ buildConfig doc = do
   monthsInt  <- maybeToEither "monthsToSimulate is geen geldig getal" (readMaybe monthsStr)
   eventPairs <- maybeToEither "[events] sectie ontbreekt" (lookupSection doc "events")
   events     <- parseEvents eventPairs
-  return (Config (Cents startInt) events monthsInt)
+  rulePairs  <- maybeToEither "[rules] sectie ontbreekt" (lookupSection doc "rules")
+  rules      <- parseRules rulePairs
+  return (Config (Cents startInt) events monthsInt rules)
 
 maybeToEither :: String -> Maybe a -> Either String a
 maybeToEither msg Nothing  = Left msg
@@ -41,3 +43,11 @@ parseEvents ((key, val):rest) =
       in case parseEvents rest of
            Left err     -> Left err
            Right events -> Right (event : events)
+
+parseRules :: [(String, String)] -> Either String [Rule]
+parseRules [] = Right []
+parseRules (("MinBalance", val):rest) =
+  case readMaybe val of
+    Nothing -> Left "MinBalance is geen geldig getal"
+    Just amount -> fmap (MinBalance (Cents amount) :) (parseRules rest)
+parseRules ((key, _):rest) = parseRules rest  -- onbekende regels negeren

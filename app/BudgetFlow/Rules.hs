@@ -4,8 +4,11 @@ import BudgetFlow.Types
 import Data.Maybe (mapMaybe)
 
 evalRules :: [Rule] -> MonthState -> [Event] -> [String]
-evalRules rules monthState _events = mapMaybe (\r -> checkRule r monthState) rules
+evalRules rules monthState events = mapMaybe (\r -> checkRule r monthState events) rules
 
-checkRule :: Rule -> MonthState -> Maybe String
-checkRule (MinBalance (Cents minAmt)) (MonthState _ (Cents balance)) =
-  if balance < minAmt then Just "Saldo onder minimum" else Nothing 
+checkRule :: Rule -> MonthState -> [Event] -> Maybe String
+checkRule (MinBalance (Cents minAmt)) (MonthState _ (Cents balance)) _ =
+  if balance < minAmt then Just "..." else Nothing
+checkRule (CategoryLimit cat (Cents limit)) _ events =
+  let total = sum [amt | Expense c (Cents amt) <- events, c == cat]
+  in if total > limit then Just ("Categorielimiet overschreden voor: " ++ show cat) else Nothing

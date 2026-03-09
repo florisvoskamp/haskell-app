@@ -36,3 +36,10 @@ simulateWith startBalance events n =
 -- Run simulation with a config
 simulate :: Config -> [MonthState]
 simulate config = simulateWith (startBalance config) (monthlyEvents config) (monthsToSimulate config)
+
+-- Oneindige lijst of MonthStates
+timeline :: Money -> [Event] -> [MonthState]
+timeline start events = map (uncurry MonthState) (zip [1..] balances)
+  where
+    balances = drop 1 (map snd (iterate step ((1 :: Integer), start)))
+    step (month, balance) = (month + 1, simulateMonth balance events)
