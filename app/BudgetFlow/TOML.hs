@@ -37,3 +37,9 @@ parseTOML input = Right (processLines (lines input) "" [])
 
 lookupSection :: TOMLDoc -> String -> Maybe [(String, String)]
 lookupSection doc name = lookup name doc
+
+lookupInDoc :: TOMLDoc -> String -> String -> Maybe String
+lookupInDoc doc section key =
+  case lookupSection doc section of
+    Nothing    -> Nothing
+    Just pairs -> lookup key pairs
