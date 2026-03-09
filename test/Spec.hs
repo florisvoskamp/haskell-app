@@ -1,14 +1,15 @@
 module Main where
 
 import Test.Tasty
-import Test.Tasty.HUnit (testCase, assertEqual)
+import Test.Tasty.HUnit (testCase, assertEqual, assertFailure)
 import BudgetFlow.Types
     ( Event(Expense, Income),
       Money(Cents),
       euroToCents,
-      centsToDisplayString, Category (..), MonthState (MonthState), Rule (..), Config (Config) )
+      centsToDisplayString, Category (..), MonthState (MonthState), Rule (..), Config (..) )
 import BudgetFlow.Core ( applyEvent, simulateMonth, simulate, simulateWith ) 
 import BudgetFlow.Rules (checkRule, evalRules)
+import BudgetFlow.Config
 
 main :: IO ()
 main = defaultMain $ testGroup "BudgetFlow"
@@ -26,5 +27,16 @@ main = defaultMain $ testGroup "BudgetFlow"
   , testGroup "Rules" [
     testCase "checkRule" $ assertEqual "" (Just "Saldo onder minimum") (checkRule (MinBalance(Cents 1000)) ((MonthState 1 (Cents 500)))),
     testCase "evalRules" $ assertEqual "" (["Saldo onder minimum"]) (evalRules [(MinBalance(Cents 1000)), (MinBalance(Cents 1500))] ((MonthState 1 (Cents 1000))) [Expense (Category "Rent") (Cents 500), Income (Cents 1000)])
+  ],
+  testGroup "Config" [
+  testCase "parseConfig startBalance" $
+    assertEqual ""
+      (Right (Cents 100000))
+      (fmap startBalance (parseConfig "startBalance = 100000\nmonthsToSimulate = 3\n[events]\nIncome = 20000")),
+  testCase "readConfigFile" $ do
+    result <- readConfigFile "config.toml"
+    case result of
+      Left err  -> assertFailure ("Parse fout: " ++ err)
+      Right cfg -> assertEqual "" (Cents 100000) (startBalance cfg)
   ]
   ]

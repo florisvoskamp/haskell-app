@@ -3,6 +3,7 @@ module Main where
 import Assignments.Recursion
 import BudgetFlow.Core
 import BudgetFlow.Types
+import BudgetFlow.Config
 
 main :: IO ()
 main = do
@@ -15,19 +16,15 @@ main = do
   printBinair 13
   putStrLn ""
   putStrLn "-- Testing BudgetFlow --"
-  testBudgetFlow
+  result <- readConfigFile "config.toml"
+  case result of
+    Left err     -> putStrLn ("Fout: " ++ err)
+    Right config -> runSimulation config
 
-testBudgetFlow :: IO ()
-testBudgetFlow = do
-  let start = Cents 100000
-      income = Income (Cents 20000)
-      expense1 = Expense (Category "Rent") (Cents 40000)
-      expense2 = Expense (Category "Groceries") (Cents 10000)
-      events = [income, expense1, expense2]
-      nMonths = 3
-      config = Config start events nMonths
-      result = simulate config
-  putStrLn $ "Simulate " ++ show nMonths ++ " months starting from €" ++ centsToDisplayString start
+runSimulation :: Config -> IO ()
+runSimulation config = do
+  let result = simulate config
+  putStrLn $ "Simulate " ++ show (monthsToSimulate config) ++ " months starting from €" ++ centsToDisplayString (startBalance config)
   mapM_ printMonth result
   where
     printMonth (MonthState month money) =
