@@ -34,3 +34,6 @@ addToSection ((name, pairs):rest) section k v
 
 parseTOML :: String -> Either String TOMLDoc
 parseTOML input = Right (processLines (lines input) "" [])
+
+lookupSection :: TOMLDoc -> String -> Maybe [(String, String)]
+lookupSection doc name = lookup name doc
