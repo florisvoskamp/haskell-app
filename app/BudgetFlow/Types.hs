@@ -11,7 +11,9 @@ data Config = Config {
     monthlyEvents       :: [Event],
     monthsToSimulate    :: Int,
     rules               :: [Rule],
-    variableExpenses    :: [VariableExpense]
+    variableExpenses    :: [VariableExpense],
+    monteCarloRuns      :: Int,
+    monteCarloSeed      :: Int
 } deriving (Eq, Show)
 -- Een document = lijst van secties. Elke sectie heeft een naam en key-value paren.
 -- Sectienaam "" = top-level (geen [sectie] header)

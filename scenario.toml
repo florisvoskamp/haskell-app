@@ -1,0 +1,5 @@
+# scenario file: from which month the extra events apply (amounts in cents)
+scenarioFrom = 2
+
+[events]
+Extra = 15000

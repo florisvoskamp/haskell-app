@@ -1,0 +1,21 @@
+# all amounts in cents
+startBalance = 300000
+monthsToSimulate = 6
+
+[events]
+Income = 200000
+Rent = 100000
+Groceries = 40000
+
+[rules]
+MinBalance = 20000
+
+[variable_expenses]
+Food = 30000 90000
+Entertainment = 15000 60000
+Housing = 10000 30000
+Transport = 5000 15000
+Other = 2000 6000
+
+[monte_carlo]
+runs = 100000

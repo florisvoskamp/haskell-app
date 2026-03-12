@@ -23,8 +23,11 @@ oneRun config seed =
       allEvents = monthlyEvents config ++ varEvents
   in take (monthsToSimulate config) (timeline (startBalance config) allEvents)
 
-runMonteCarlo :: Config -> Int -> [[MonthState]]
-runMonteCarlo config n = map (oneRun config) [1..n]
+runMonteCarlo :: Config -> [[MonthState]]
+runMonteCarlo config =
+  let seed = monteCarloSeed config
+      n   = monteCarloRuns config
+  in map (oneRun config) [seed .. seed + n - 1]
 
 overdraftProbability :: [[MonthState]] -> Double
 -- only the final month’s result from every run is needed

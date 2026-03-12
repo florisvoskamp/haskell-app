@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "BudgetFlow (default)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cabal run haskell-app --",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "BudgetFlow (with args)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cabal run haskell-app -- stress test.toml",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}

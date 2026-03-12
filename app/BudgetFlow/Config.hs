@@ -25,7 +25,8 @@ buildConfig doc = do
   events     <- parseEvents eventPairs
   rulesList  <- parseRules (maybe [] id (lookupSection doc "rules"))
   varExps    <- parseVariableExpenses (maybe [] id (lookupSection doc "variable_expenses"))
-  return (Config (Cents startInt) events monthsInt rulesList varExps)
+  let (runs, seed) = parseMonteCarlo (maybe [] id (lookupSection doc "monte_carlo"))
+  return (Config (Cents startInt) events monthsInt rulesList varExps runs seed)
 
 maybeToEither :: String -> Maybe a -> Either String a
 maybeToEither msg Nothing  = Left msg
@@ -52,6 +53,12 @@ parseRules (("MinBalance", val):rest) =
     Just amount -> fmap (MinBalance (Cents amount) :) (parseRules rest)
 parseRules ((_, _):rest) = parseRules rest  -- onbekende regels negeren
 
+parseMonteCarlo :: [(String, String)] -> (Int, Int)
+parseMonteCarlo pairs =
+  let runs = maybe 1000 id (lookup "runs" pairs >>= readMaybe)
+      seed = maybe 1 id (lookup "seed" pairs >>= readMaybe)
+  in (runs, seed)
+
 -- Parse [variable_expenses] section: "Category = lo hi" e.g. "Food = 3000 8000"
 parseVariableExpenses :: [(String, String)] -> Either String [VariableExpense]
 parseVariableExpenses [] = Right []
@@ -63,3 +70,22 @@ parseVariableExpenses ((key, val):rest) =
           fmap (VariableExpense (Category key) (Uniform lo hi) :) (parseVariableExpenses rest)
         _ -> Left ("Ongeldige distributie voor: " ++ key)
     _ -> Left ("Verwacht 'lo hi' voor variabele uitgave: " ++ key)
+
+buildScenario :: TOMLDoc -> Either String Scenario
+buildScenario doc = do
+  fromStr <- maybeToEither "scenarioFrom ontbreekt" (lookupInDoc doc "" "scenarioFrom")
+  fromInt <- maybeToEither "scenarioFrom is geen getal" (readMaybe fromStr)
+  eventPairs <- maybeToEither "[events] ontbreekt" (lookupSection doc "events")
+  events <- parseEvents eventPairs
+  return (Scenario fromInt events)
+
+parseScenario :: String -> Either String Scenario
+parseScenario content =
+  case parseTOML content of
+    Left err -> Left err
+    Right doc -> buildScenario doc
+
+readScenarioFile :: FilePath -> IO (Either String Scenario)
+readScenarioFile path = do
+  content <- readFile path
+  return (parseScenario content)
