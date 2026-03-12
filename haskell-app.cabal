@@ -68,12 +68,13 @@ executable haskell-app
                         BudgetFlow.Config
                         BudgetFlow.TOML
                         BudgetFlow.Scenario
+                        BudgetFlow.MonteCarlo
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
-    build-depends:    base
+    build-depends:    base, random
 
     -- Directories containing source files.
     hs-source-dirs:   app

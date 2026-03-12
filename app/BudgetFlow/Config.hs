@@ -23,9 +23,9 @@ buildConfig doc = do
   monthsInt  <- maybeToEither "monthsToSimulate is geen geldig getal" (readMaybe monthsStr)
   eventPairs <- maybeToEither "[events] sectie ontbreekt" (lookupSection doc "events")
   events     <- parseEvents eventPairs
-  rulePairs  <- maybeToEither "[rules] sectie ontbreekt" (lookupSection doc "rules")
-  rules      <- parseRules rulePairs
-  return (Config (Cents startInt) events monthsInt rules)
+  rulesList  <- parseRules (maybe [] id (lookupSection doc "rules"))
+  varExps    <- parseVariableExpenses (maybe [] id (lookupSection doc "variable_expenses"))
+  return (Config (Cents startInt) events monthsInt rulesList varExps)
 
 maybeToEither :: String -> Maybe a -> Either String a
 maybeToEither msg Nothing  = Left msg
@@ -50,4 +50,16 @@ parseRules (("MinBalance", val):rest) =
   case readMaybe val of
     Nothing -> Left "MinBalance is geen geldig getal"
     Just amount -> fmap (MinBalance (Cents amount) :) (parseRules rest)
-parseRules ((key, _):rest) = parseRules rest  -- onbekende regels negeren
+parseRules ((_, _):rest) = parseRules rest  -- onbekende regels negeren
+
+-- Parse [variable_expenses] section: "Category = lo hi" e.g. "Food = 3000 8000"
+parseVariableExpenses :: [(String, String)] -> Either String [VariableExpense]
+parseVariableExpenses [] = Right []
+parseVariableExpenses ((key, val):rest) =
+  case words val of
+    [loStr, hiStr] ->
+      case (readMaybe loStr, readMaybe hiStr) of
+        (Just lo, Just hi) ->
+          fmap (VariableExpense (Category key) (Uniform lo hi) :) (parseVariableExpenses rest)
+        _ -> Left ("Ongeldige distributie voor: " ++ key)
+    _ -> Left ("Verwacht 'lo hi' voor variabele uitgave: " ++ key)

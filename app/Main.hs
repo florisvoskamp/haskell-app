@@ -6,10 +6,11 @@ import BudgetFlow.Types
 import BudgetFlow.Config
 import BudgetFlow.Rules (evalRules)
 import BudgetFlow.Scenario (simulateWithScenario)
+import BudgetFlow.MonteCarlo (runMonteCarlo, overdraftProbability, percentile)
 
 main :: IO ()
 main = do
-  putStrLn "Hello, Haskell!"
+  putStrLn "-- Testing Recursion Class Assignments --"
   putStrLn $ "gcd' 48 18 = " ++ show (gcd' 48 18)
   putStrLn $ "isPal lepel = " ++ show (isPal "lepel")
   putStrLn $ "somVanCijfer 1234 = " ++ show (somVanCijfer 1234)
@@ -24,6 +25,7 @@ main = do
     Right config -> do
       runSimulation config
       runScenario config
+      runMonteCarloReport config
 
 -- runs the basic simulation and prints out results per month
 runSimulation :: Config -> IO ()
@@ -55,6 +57,23 @@ runScenario config = do
   putStrLn $ "\nScenario: extra uitgave van 150 vanaf maand " ++ show (scenarioFrom scenario)
   putStrLn "Maand  | Baseline    | Scenario    | Verschil"
   mapM_ (printComparison) (zip baseline scenarioResult)
+
+-- runs 1000 Monte Carlo simulations and reports risk statistics
+runMonteCarloReport :: Config -> IO ()
+runMonteCarloReport config = do
+  let runs        = runMonteCarlo config 1000
+      finalSaldi  = [b | run <- runs, MonthState _ (Cents b) <- [last run]]
+      overdraft   = overdraftProbability runs * 100
+      p10         = percentile 0.10 finalSaldi
+      p50         = percentile 0.50 finalSaldi
+      p90         = percentile 0.90 finalSaldi
+  putStrLn ""
+  putStrLn $ "Monte Carlo stress test (1000 runs)"
+  putStrLn $ "Variabele uitgaven: " ++ show (length (variableExpenses config)) ++ " categorie(en)"
+  putStrLn $ "Kans op negatief eindsaldo: " ++ show (round overdraft :: Int) ++ "%"
+  putStrLn $ "Eindsaldo p10 (pessimistisch): " ++ centsToDisplayString (Cents p10)
+  putStrLn $ "Eindsaldo p50 (mediaan):       " ++ centsToDisplayString (Cents p50)
+  putStrLn $ "Eindsaldo p90 (optimistisch):  " ++ centsToDisplayString (Cents p90)
 
 -- prints the comparison between baseline and scenario for a month
 printComparison :: (MonthState, MonthState) -> IO ()

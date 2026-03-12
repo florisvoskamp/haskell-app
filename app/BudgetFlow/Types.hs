@@ -10,7 +10,8 @@ data Config = Config {
     startBalance        :: Money,
     monthlyEvents       :: [Event],
     monthsToSimulate    :: Int,
-    rules               :: [Rule]
+    rules               :: [Rule],
+    variableExpenses    :: [VariableExpense]
 } deriving (Eq, Show)
 -- Een document = lijst van secties. Elke sectie heeft een naam en key-value paren.
 -- Sectienaam "" = top-level (geen [sectie] header)
@@ -24,6 +25,10 @@ data Scenario = Scenario
   { scenarioFrom   :: Int     -- vanaf welke maand
   , scenarioEvents :: [Event] -- extra of vervangende events
   } deriving (Eq, Show)
+data Distribution = Uniform Int Int  -- min en max in cents
+  deriving (Eq, Show)
+data VariableExpense = VariableExpense Category Distribution
+  deriving (Eq, Show)
 
 -- Takes 100.00 euro and turns it into 100000 cents
 euroToCents :: Double -> Money

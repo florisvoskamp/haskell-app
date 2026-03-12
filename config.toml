@@ -1,10 +1,15 @@
-startBalance = 100000
+# all amounts in cents
+startBalance = 200000
 monthsToSimulate = 3
 
 [events]
-Income = 20000
-Rent = 40000
-Groceries = 10000
+Income = 240000
+Rent = 80000
+Groceries = 30000
 
 [rules]
-MinBalance = 10000
+MinBalance = 50000
+
+[variable_expenses]
+Food = 5000 15000
+Entertainment = 3000 10000
