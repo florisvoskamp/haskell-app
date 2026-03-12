@@ -90,7 +90,10 @@ test-suite haskell-app-test
     other-modules:    BudgetFlow.Types
                      BudgetFlow.Core
                      BudgetFlow.Rules
+                     BudgetFlow.Config
+                     BudgetFlow.TOML
     build-depends:    base
                    , tasty
                    , tasty-hunit
+                   , random
     default-language: GHC2024

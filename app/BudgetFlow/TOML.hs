@@ -10,12 +10,12 @@ trim = dropWhileEnd isSpace . dropWhile isSpace
 parseLine :: String -> LineType
 parseLine s =
   let t = trim s
-  in case () of
-       _ | null t                    -> CommentOrEmpty
-       _ | head t == '#'              -> CommentOrEmpty
-       _ | head t == '[' && last t == ']' -> Section (init (drop 1 t))
-       _ | elem '=' t                 -> KeyValue (trim (takeWhile (/= '=') t)) (trim (drop 1 (dropWhile (/= '=') t)))
-       _                              -> CommentOrEmpty
+  in case t of
+       "" -> CommentOrEmpty
+       '#':_ -> CommentOrEmpty
+       '[':rest | not (null rest) && last rest == ']' -> Section (init rest)
+       _ | elem '=' t -> KeyValue (trim (takeWhile (/= '=') t)) (trim (drop 1 (dropWhile (/= '=') t)))
+       _ -> CommentOrEmpty
 
 processLines :: [String] -> String -> [(String, [(String, String)])] -> [(String, [(String, String)])]
 processLines [] _ acc = acc

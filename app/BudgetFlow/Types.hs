@@ -38,4 +38,4 @@ euroToCents euro = Cents (round (euro * 100))
 
 -- Turns cents f.e. 100 into 1.00 euro
 centsToDisplayString :: Money -> String
-centsToDisplayString (Cents c) = show (fromIntegral c / 100.0)
+centsToDisplayString (Cents c) = show ((fromIntegral c / 100.0) :: Double)

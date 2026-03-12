@@ -29,6 +29,7 @@ simulateWith startBalance events n =
     -- zip [1..n] sticksd the month number together with the balance
     map (uncurry MonthState) (zip [1..n] balancesPerMonth)
     where
+        step :: (Int, Money) -> Int -> (Int, Money)
         step (month, balance) _ = (month + 1, simulateMonth balance events)
         balancesPerMonth = map snd (drop 1 (scanl step (1, startBalance) [1..n]))
 
