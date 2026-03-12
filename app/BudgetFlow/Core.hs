@@ -11,11 +11,6 @@ applyEvent (Cents balance) (Expense _ (Cents amount)) =
     -- If it's expense, subtract the amount, category is not used in this function
     Cents (balance - amount)
 
--- This function goes through all the events for one month and updates the money
--- adding/subtracting all incomes and expenses for a month
-simulateMonth :: Money -> [Event] -> Money
-simulateMonth start events = foldl applyEvent start events
-
 -- This function does the budget for multiple months
 -- It gives a list with the balance at the end of each month
 simulateWith :: Money -> [Event] -> Int -> [MonthState]
@@ -43,3 +38,11 @@ timeline start events = map (uncurry MonthState) (zip [1..] balances)
   where
     balances = drop 1 (map snd (iterate step ((1 :: Integer), start)))
     step (month, balance) = (month + 1, simulateMonth balance events)
+
+-- Calculate total income from a list of events
+totalIncome :: [Event] -> Int
+totalIncome events = sum [amt | Income (Cents amt) <- events]
+
+-- Calculate total expenses from a list of events
+totalExpenses :: [Event] -> Int
+totalExpenses events = sum [amt | Expense _ (Cents amt) <- events]
