@@ -1,0 +1,157 @@
+name: Release Binaries
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+env:
+  APP_NAME: haskell-app
+
+jobs:
+  build-native:
+    name: Build ${{ matrix.label }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            label: Linux
+            target: linux
+          - os: macos-latest
+            label: macOS
+            target: macos
+          - os: windows-latest
+            label: Windows
+            target: windows
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up GHC and Cabal
+        uses: haskell-actions/setup@v2
+        with:
+          ghc-version: "9.10.1"
+          cabal-version: "3.12.1.0"
+
+      - name: Update package index
+        run: cabal update
+
+      - name: Build project
+        run: cabal build all
+
+      - name: Run test suite
+        run: cabal test
+
+      - name: Package Unix release asset
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${GITHUB_REF_NAME}"
+          TARGET="${{ matrix.target }}"
+          BIN_PATH="$(cabal list-bin haskell-app)"
+          STAGE_DIR="${APP_NAME}-${VERSION}-${TARGET}"
+
+          mkdir -p "${STAGE_DIR}"
+          cp "${BIN_PATH}" "${STAGE_DIR}/${APP_NAME}"
+          cp README.md LICENSE test.toml scenario.toml "${STAGE_DIR}/"
+
+          mkdir -p dist
+          tar -czf "dist/${STAGE_DIR}.tar.gz" "${STAGE_DIR}"
+
+      - name: Package Windows release asset
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $version = $env:GITHUB_REF_NAME
+          $target = "${{ matrix.target }}"
+          $binPath = (cabal list-bin haskell-app).Trim()
+          $stageDir = "$env:APP_NAME-$version-$target"
+
+          New-Item -ItemType Directory -Force -Path $stageDir | Out-Null
+          Copy-Item $binPath "$stageDir\$env:APP_NAME.exe"
+          Copy-Item README.md, LICENSE, test.toml, scenario.toml $stageDir
+
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Compress-Archive -Path $stageDir -DestinationPath "dist\$stageDir.zip" -Force
+
+      - name: Upload packaged asset
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ matrix.target }}
+          path: dist/*
+
+  build-archlinux:
+    name: Build Arch Linux
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build and package in Arch Linux container
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run --rm \
+            -e GITHUB_REF_NAME="${GITHUB_REF_NAME}" \
+            -e APP_NAME="${APP_NAME}" \
+            -v "${PWD}:/workspace" \
+            -w /workspace \
+            archlinux:latest \
+            bash -lc '
+              set -euo pipefail
+              pacman -Syu --noconfirm --needed ghc cabal-install gcc make tar gzip gmp zlib ncurses
+              cabal update
+              cabal build all
+              cabal test
+
+              VERSION="${GITHUB_REF_NAME}"
+              STAGE_DIR="${APP_NAME}-${VERSION}-archlinux"
+              BIN_PATH="$(cabal list-bin haskell-app)"
+
+              mkdir -p "dist/${STAGE_DIR}"
+              cp "${BIN_PATH}" "dist/${STAGE_DIR}/${APP_NAME}"
+              cp README.md LICENSE test.toml scenario.toml "dist/${STAGE_DIR}/"
+
+              tar -C dist -czf "dist/${STAGE_DIR}.tar.gz" "${STAGE_DIR}"
+            '
+
+      - name: Upload packaged Arch Linux asset
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-archlinux
+          path: dist/*.tar.gz
+
+  create-release:
+    name: Create GitHub release
+    needs:
+      - build-native
+      - build-archlinux
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Download packaged assets
+        uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          merge-multiple: true
+          path: dist
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "BudgetFlow ${{ github.ref_name }}"
+          body_path: "release-notes/${{ github.ref_name }}.md"
+          files: |
+            dist/*
+          fail_on_unmatched_files: true
