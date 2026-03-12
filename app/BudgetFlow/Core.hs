@@ -11,6 +11,10 @@ applyEvent (Cents balance) (Expense _ (Cents amount)) =
     -- If it's expense, subtract the amount, category is not used in this function
     Cents (balance - amount)
 
+-- This function goes through all the events for one month and updates the money
+simulateMonth :: Money -> [Event] -> Money
+simulateMonth start events = foldl applyEvent start events
+
 -- This function does the budget for multiple months
 -- It gives a list with the balance at the end of each month
 simulateWith :: Money -> [Event] -> Int -> [MonthState]

@@ -1,18 +1,13 @@
 module BudgetFlow.Scenario where
 
 import BudgetFlow.Types
-import BudgetFlow.Core (applyEvent)
+import BudgetFlow.Core (simulateMonth)
 
 -- Geeft de events voor een bepaalde maand (basis + scenario delta)
 eventsForMonth :: Int -> [Event] -> Scenario -> [Event]
 eventsForMonth month baseEvents scenario
   | month >= scenarioFrom scenario = baseEvents ++ scenarioEvents scenario
   | otherwise                      = baseEvents
-
--- This function goes through all the events for one month and updates the money
--- adding/subtracting all incomes and expenses for a month
-simulateMonth :: Money -> [Event] -> Money
-simulateMonth start events = foldl applyEvent start events
 
 -- Simulates N months where scenario events are added from scenarioFrom onwards
 simulateWithScenario :: Config -> Scenario -> [MonthState]
