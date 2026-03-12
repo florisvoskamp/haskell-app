@@ -35,7 +35,7 @@ simulateWith startBalance events n =
 
 -- Run simulation with a config
 simulate :: Config -> [MonthState]
-simulate config = simulateWith (startBalance config) (monthlyEvents config) (monthsToSimulate config)
+simulate config = take (monthsToSimulate config) (timeline (startBalance config) (monthlyEvents config))
 
 -- Oneindige lijst of MonthStates
 timeline :: Money -> [Event] -> [MonthState]

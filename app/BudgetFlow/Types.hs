@@ -19,6 +19,11 @@ data LineType
   = Section String
   | KeyValue String String
   | CommentOrEmpty
+  deriving (Eq, Show)
+data Scenario = Scenario
+  { scenarioFrom   :: Int     -- vanaf welke maand
+  , scenarioEvents :: [Event] -- extra of vervangende events
+  } deriving (Eq, Show)
 
 -- Takes 100.00 euro and turns it into 100000 cents
 euroToCents :: Double -> Money
