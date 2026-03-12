@@ -67,6 +67,7 @@ executable haskell-app
                         BudgetFlow.Rules
                         BudgetFlow.Config
                         BudgetFlow.TOML
+                        BudgetFlow.Scenario
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
