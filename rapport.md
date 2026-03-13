@@ -14,6 +14,10 @@ Datum: 13 maart 2026
 
 Versie: 1.0
 
+Repository: https://github.com/florisvoskamp/haskell-app
+
+Release: https://github.com/florisvoskamp/haskell-app/releases/tag/v0.1.0.0
+
 Voor de verwijzingen in de tekst en de literatuurlijst heb ik de APA 7 richtlijnen aangehouden zoals samengevat door Scribbr (Scribbr, z.d.).
 
 ## Inhoudsopgave
