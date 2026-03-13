@@ -1,13 +1,20 @@
 module BudgetFlow.Config where
 
-import BudgetFlow.Types  
-import Text.Read (readMaybe)
+import BudgetFlow.Types
 import BudgetFlow.TOML
+import Control.Exception (catch, fromException, throwIO)
+import System.IO.Error (isDoesNotExistError, ioeGetErrorString)
+import Text.Read (readMaybe)
 
 readConfigFile :: FilePath -> IO (Either String Config)
-readConfigFile path = do
-  content <- readFile path
-  return (parseConfig content)
+readConfigFile path =
+  (readFile path >>= return . parseConfig)
+    `catch` \e ->
+      case fromException e of
+        Just ioe
+          | isDoesNotExistError ioe -> return (Left ("Bestand niet gevonden: " ++ path))
+          | otherwise -> return (Left ("Fout bij lezen van " ++ path ++ ": " ++ ioeGetErrorString ioe))
+        Nothing -> throwIO e
 
 parseConfig :: String -> Either String Config
 parseConfig input =
@@ -86,6 +93,11 @@ parseScenario content =
     Right doc -> buildScenario doc
 
 readScenarioFile :: FilePath -> IO (Either String Scenario)
-readScenarioFile path = do
-  content <- readFile path
-  return (parseScenario content)
+readScenarioFile path =
+  (readFile path >>= return . parseScenario)
+    `catch` \e ->
+      case fromException e of
+        Just ioe
+          | isDoesNotExistError ioe -> return (Left ("Bestand niet gevonden: " ++ path))
+          | otherwise -> return (Left ("Fout bij lezen van " ++ path ++ ": " ++ ioeGetErrorString ioe))
+        Nothing -> throwIO e
